@@ -14,6 +14,7 @@
 #include "Config.h"
 #include "util.h"
 #include "Hooks.h"
+#include "main.h"
 
 // Set the name of your log file here
 extern const LPCWSTR LOG_FILE = L"khangstuffau.txt";
@@ -28,9 +29,17 @@ using namespace app; // this will probably cause problems later
 #define MAKE_HOOK_HIDDEN1(x) hook_##x
 #define MAKE_HOOK_HIDDEN2(x) custom_##x
 
+C_Hook hook_AmongUsClient__ctor;
 C_Hook hook_AmongUsClient_Awake;
 C_Hook hook_VersionShower_Start;
 C_Hook hook_SceneManager_Internal_ActiveSceneChanged;
+
+// prevent race conditions
+void custom_AmongUsClient__ctor(AmongUsClient* thisptr, MethodInfo* method) {
+    hook_AmongUsClient__ctor.removeHook();
+    AmongUsClient__ctor(thisptr, method);
+    Run();
+}
 
 void custom_AmongUsClient_Awake(AmongUsClient* thisptr, MethodInfo* method) {
     hook_AmongUsClient_Awake.removeHook();
@@ -62,9 +71,14 @@ void custom_SceneManager_Internal_ActiveSceneChanged(Scene previousActiveScene, 
         hat.Apply();
 }
 
+void Init() {
+    MAKE_HOOK(AmongUsClient__ctor);
+}
+
 // Custom injected code entry point
 void Run() {
     il2cppi_new_console();
+    SetConsoleTitle(L"khangstuffau debug");
 
     fmt::print("khangstuffau " __DATE__ "\n");
 

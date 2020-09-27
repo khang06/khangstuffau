@@ -4,4 +4,5 @@
 #pragma once
 
 // Custom injected code entry point
+void Init();
 void Run();

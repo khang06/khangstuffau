@@ -5,6 +5,7 @@
 #include <windows.h>
 #include "il2cpp-init.h"
 #include "main.h"
+#include "Hooks.h"
 
 extern "C" __declspec(dllexport) void dummyexport() {}
 
@@ -18,7 +19,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     {
     case DLL_PROCESS_ATTACH:
         init_il2cpp();
-        CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) Run, NULL, 0, NULL);
+        Init();
         break;
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
